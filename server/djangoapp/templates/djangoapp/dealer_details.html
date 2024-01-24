@@ -1,18 +1,51 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Dealership Review</title>
     {% load static %}
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <link href="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/bootstrap-table@1.18.2/dist/bootstrap-table.min.js"></script>
+    <script
+        src="https://unpkg.com/bootstrap-table@1.18.2/dist/extensions/filter-control/bootstrap-table-filter-control.min.js"></script>
 </head>
 
-    <body>
-
-    <!--Add a nav bar here -->
+<body>
+    {% include 'navbar.html' %}
 
     <!-- Add reviews as cards -->
+    <div class="container">
+        <h2>{{dealership.full_name}}</h2>
+        {% if reviews %}
+        <div class="card-deck">
+            {% for review in reviews %}
+            <div class="card" style="width: 36rem;">
+                <div class="card-body bg-light">
+                    <h5 class="card-title"><span class="text-success">
+                            {{review.name}}
+                        </span></h5>
+                    <p class="card-text">
+                        Purchased: {{review.purchase}}
+                    </p>
+                    <p class="card-text">
+                        {{review.review}}
+                    </p>
+                    {% if review.purchase %}
+                    <p class="card-text">{{review.purchase_date}}</p>
+                    <p class="card-text">{{review.car_make}} {{review.car_model}} {{review.car_year}}</p>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
 
-    </body>
+</body>
 
 </html>
