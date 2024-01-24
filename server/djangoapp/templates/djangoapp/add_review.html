@@ -1,16 +1,36 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     {% load static %}
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/css/bootstrap-datepicker.css"
+        rel="stylesheet">
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.5.0/js/bootstrap-datepicker.js"></script>
 
 </head>
-    <body>
+
+<body>
+    {% include 'navbar.html' %}
+
     <!--Add review form here -->
-    </body>
+    <form action="{% url 'djangoapp:add_review' dealer_id=dealership.id %}" method="POST">
+        <div class="container">
+            <h2>Add Review for {{dealership.full_name}}</h2>
+            <div class="form-group">
+                <label for="name"><b>Name: </b></label>
+                <input id="name" class="form-control" type="text" placeholder="Enter your name" name="name" required>
+                <label for="purchase"><b>Purchase: </b></label>
+                <input id="purchase" class="form-control" type="checkbox" name="purchase" required>
+                <label for="review"></label>
+                <textarea class="form-control" name="review" id="review" cols="30" rows="10"></textarea>
+                <button class="btn btn-primary" type="submit">Send</button>
+            </div>
+        </div>
+    </form>
+</body>
+
 </html>

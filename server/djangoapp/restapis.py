@@ -35,6 +35,9 @@ def get_request(url, api_key=None, **kwargs):
 
 # Create a `post_request` to make HTTP POST requests
 # e.g., response = requests.post(url, params=kwargs, json=payload)
+def post_request(url, json_payload, **kwargs):
+    response = requests.post(url, json=json_payload, params=kwargs)
+    return response
 
 
 def get_dealers_from_cf(url, **kwargs):
@@ -115,14 +118,10 @@ def analyze_review_sentiments(text):
         version="2022-04-07", authenticator=authenticator
     )
     natural_language_understanding.set_service_url(url)
-    try :
+    try:
         response = natural_language_understanding.analyze(
             text=text, features=Features(sentiment=SentimentOptions(targets=[text]))
         ).get_result()
         return response["sentiment"]["document"]["label"]
     except:
         return "unnable to process sentiment"
-
-
-# - Call get_request() with specified arguments
-# - Get the returned sentiment label such as Positive or Negative

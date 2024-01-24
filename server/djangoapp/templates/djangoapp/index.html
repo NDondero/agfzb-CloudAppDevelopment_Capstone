@@ -31,17 +31,23 @@
                     <th scope="col">Address</th>
                     <th scope="col">Zip</th>
                     <th scope="col">Short-Name</th>
+                    {% if user.is_authenticated %}
+                    <th scope="col"><span class="font-weight-bold">Add Review</span></th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
                 {% for dealership in dealerships %}
                 <tr>
                     <th scope="row">{{dealership.id}}</th>
-                    <td><a class="btb btn-link" href="{% url 'djangoapp:dealer_details' dealership.id %}">{{dealership.full_name}}</a></td>
+                    <td><a class="btn btn-link" href="{% url 'djangoapp:dealer_details' dealership.id %}">{{dealership.full_name}}</a></td>
                     <td>{{dealership.city}}</td>
                     <td>{{dealership.address}}</td>
                     <td>{{dealership.zip}}</td>
                     <td>{{dealership.short_name}}</td>
+                    {% if user.is_authenticated %}
+                    <td><a class="btn btn-link" href="{% url 'djangoapp:add_review' dealership.id %}">.</a></td>
+                    {% endif %}
                 </tr>
                 {% endfor %}
             </tbody>

@@ -61,15 +61,15 @@ def post_review():
 
     # Validate that the required fields are present in the review data
     required_fields = [
-        "id",
+        # "id",
         "name",
         "dealership",
         "review",
         "purchase",
-        "purchase_date",
-        "car_make",
-        "car_model",
-        "car_year",
+        # "purchase_date",
+        # "car_make",
+        # "car_model",
+        # "car_year",
     ]
     for field in required_fields:
         if field not in review_data:

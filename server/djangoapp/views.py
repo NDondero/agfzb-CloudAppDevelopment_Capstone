@@ -2,12 +2,14 @@ from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
+from datetime import datetime
 
 # from .models import related models
 from .restapis import (
     get_dealers_from_cf,
     get_dealer_by_id_from_cf,
     get_dealer_reviews_from_cf,
+    post_request,
 )
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
@@ -117,5 +119,25 @@ def get_dealer_details(request, dealer_id):
 
 
 # Create a `add_review` view to submit a review
-# def add_review(request, dealer_id):
-# ...
+def add_review(request, dealer_id):
+    context = {}
+    if request.method == "GET":
+        dealer_url = f"https://ndondero-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get?id={dealer_id}"
+        dealerships = get_dealer_by_id_from_cf(dealer_url, dealer_id)
+        context["dealership"] = dealerships[0]
+        return render(request, "djangoapp/add_review.html", context)
+    elif request.method == "POST" and request.user.is_authenticated:
+        json_payload = {
+            "purchase_date": datetime.utcnow().strftime("%m/%d/%Y"),
+            "name": request.POST["name"],
+            "dealership": dealer_id,
+            "review": request.POST["review"],
+            "purchase": request.POST.get("purchase", False),
+            # "car_make": request.POST["car_make"],
+            # "car_model": request.POST["car_model"],
+            # "car_year": request.POST["car_year"],
+        }
+        url = "https://ndondero-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review"
+        response = post_request(url, json_payload, dealer_id=dealer_id)
+        print(response)
+        return redirect("djangoapp:dealer_details", dealer_id=dealer_id)
