@@ -35,6 +35,11 @@
                     <p class="card-text">
                         {{review.review}}
                     </p>
+                    <p class="card-text">
+                        <span class="font-italic">
+                            {{review.sentiment}}
+                        </span>
+                    </p>
                     {% if review.purchase %}
                     <p class="card-text">{{review.purchase_date}}</p>
                     <p class="card-text">{{review.car_make}} {{review.car_model}} {{review.car_year}}</p>
