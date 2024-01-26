@@ -22,6 +22,10 @@
     {% if dealerships %}
     <div class="container">
         <h2>Dealerships</h2>
+        <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search by State" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>
         <table class="table table-bordered table-hover">
             <thead class="thead-dark">
                 <tr>
@@ -40,7 +44,8 @@
                 {% for dealership in dealerships %}
                 <tr>
                     <th scope="row">{{dealership.id}}</th>
-                    <td><a class="btn btn-link" href="{% url 'djangoapp:dealer_details' dealership.id %}">{{dealership.full_name}}</a></td>
+                    <td><a class="btn btn-link"
+                            href="{% url 'djangoapp:dealer_details' dealership.id %}">{{dealership.full_name}}</a></td>
                     <td>{{dealership.city}}</td>
                     <td>{{dealership.address}}</td>
                     <td>{{dealership.zip}}</td>

@@ -92,18 +92,12 @@ def registration_request(request):
 def get_dealerships(request):
     context = {}
     if request.method == "GET":
+        state = request.GET.get("state", None)
         url = "https://ndondero-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
         # Get dealers from the URL
-        dealerships = get_dealers_from_cf(url)
+        dealerships = get_dealers_from_cf(url, state=state)
         context["dealerships"] = dealerships
         return render(request, "djangoapp/index.html", context)
-
-
-# TODO:
-# get_dealer_by_id
-# get_dealers_by_state
-# kwargs should be in request
-# hint: get_request(url, dealerId=dealerId)
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
