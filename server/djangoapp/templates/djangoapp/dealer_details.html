@@ -20,6 +20,7 @@
 
     <!-- Add reviews as cards -->
     <div class="container">
+        {% if dealership %}
         <h2>{{dealership.full_name}}</h2>
         {% if reviews %}
         <div class="card-deck">
@@ -48,6 +49,9 @@
             </div>
             {% endfor %}
         </div>
+        {% endif %}
+        {% else %}
+        <h2>Provided ID does not correspond to an actual Dealership</h2>
         {% endif %}
     </div>
 

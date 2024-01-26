@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render, redirect
 from datetime import datetime
 
-# from .models import related models
+from .models import CarModel
 from .restapis import (
     get_dealers_from_cf,
     get_dealer_by_id_from_cf,
@@ -110,8 +111,8 @@ def get_dealer_details(request, dealer_id):
     context = {}
     if request.method == "GET":
         dealer_url = f"https://ndondero-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get?id={dealer_id}"
-        dealerships = get_dealer_by_id_from_cf(dealer_url, dealer_id)
-        context["dealership"] = dealerships[0]
+        dealership = get_dealer_by_id_from_cf(dealer_url, dealer_id)
+        context["dealership"] = dealership
         url = f"https://ndondero-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews?id={dealer_id}"
         reviews = get_dealer_reviews_from_cf(url, dealer_id)
         context["reviews"] = reviews
@@ -119,23 +120,29 @@ def get_dealer_details(request, dealer_id):
 
 
 # Create a `add_review` view to submit a review
+@login_required
 def add_review(request, dealer_id):
     context = {}
     if request.method == "GET":
         dealer_url = f"https://ndondero-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get?id={dealer_id}"
-        dealerships = get_dealer_by_id_from_cf(dealer_url, dealer_id)
-        context["dealership"] = dealerships[0]
+        dealership = get_dealer_by_id_from_cf(dealer_url, dealer_id)
+        context["dealership"] = dealership
+        if dealership is not None:
+            car_models = CarModel.objects.all()
+            context["car_models"] = car_models
         return render(request, "djangoapp/add_review.html", context)
-    elif request.method == "POST" and request.user.is_authenticated:
+    elif request.method == "POST":
+        car_model_id = request.POST["car_model_id"]
+        car_model = CarModel.objects.get(pk=car_model_id)
         json_payload = {
             "purchase_date": datetime.utcnow().strftime("%m/%d/%Y"),
             "name": request.POST["name"],
             "dealership": dealer_id,
             "review": request.POST["review"],
             "purchase": request.POST.get("purchase", False),
-            # "car_make": request.POST["car_make"],
-            # "car_model": request.POST["car_model"],
-            # "car_year": request.POST["car_year"],
+            "car_make": car_model.make.name,
+            "car_model": car_model.name,
+            "car_year": car_model.year,
         }
         url = "https://ndondero-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review"
         response = post_request(url, json_payload, dealer_id=dealer_id)

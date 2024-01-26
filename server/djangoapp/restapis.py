@@ -68,7 +68,6 @@ def get_dealers_from_cf(url, **kwargs):
 
 
 def get_dealer_by_id_from_cf(url, dealerId):
-    results = []
     json_result = get_request(url, dealerId=dealerId)
     if json_result:
         dealer_doc = json_result[0]
@@ -83,8 +82,8 @@ def get_dealer_by_id_from_cf(url, dealerId):
             st=dealer_doc["st"],
             zip=dealer_doc["zip"],
         )
-        results.append(dealership)
-    return results
+        return dealership
+    return None
 
 
 def get_dealer_reviews_from_cf(url, dealerId):

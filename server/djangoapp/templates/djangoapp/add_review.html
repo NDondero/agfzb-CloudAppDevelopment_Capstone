@@ -17,6 +17,7 @@
     {% include 'navbar.html' %}
 
     <!--Add review form here -->
+    {% if dealership %}
     <form action="{% url 'djangoapp:add_review' dealer_id=dealership.id %}" method="POST">
         <div class="container">
             <h2>Add Review for {{dealership.full_name}}</h2>
@@ -25,12 +26,23 @@
                 <input id="name" class="form-control" type="text" placeholder="Enter your name" name="name" required>
                 <label for="purchase"><b>Purchase: </b></label>
                 <input id="purchase" class="form-control" type="checkbox" name="purchase" required>
+                <label for="car_model_id">Select Car Model</label>
+                <select class="form-control" name="car_model_id" id="car_model_id">
+                    {% for car_model in car_models %}
+                    <option value="{ car_model.id }">
+                        {car_model.make.name} {car_model.name} {car_model.year|date:"Y"}
+                    </option>
+                    {% endfor %}
+                </select>
                 <label for="review"></label>
                 <textarea class="form-control" name="review" id="review" cols="30" rows="10"></textarea>
                 <button class="btn btn-primary" type="submit">Send</button>
             </div>
         </div>
     </form>
+    {% else %}
+    <h2>Provided ID does not correspond to an actual Dealership</h2>
+    {% endif %}
 </body>
 
 </html>
