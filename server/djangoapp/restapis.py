@@ -29,7 +29,12 @@ def get_request(url, api_key=None, **kwargs):
         print("Network exception occurred")
     status_code = response.status_code
     print("With status {} ".format(status_code))
-    json_data = json.loads(response.text)
+    try:
+        json_data = response.json()
+    except json.JSONDecodeError as e:
+        print(f"Error decoding JSON: {e}")
+        # Handle JSON decoding error
+        return None
     return json_data
 
 
@@ -43,7 +48,7 @@ def post_request(url, json_payload, **kwargs):
 def get_dealers_from_cf(url, **kwargs):
     results = []
     # Call get_request with a URL parameter
-    json_result = get_request(url)
+    json_result = get_request(url, **kwargs)
     if json_result:
         # Get the row list in JSON as dealers
         dealers = json_result

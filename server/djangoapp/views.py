@@ -17,6 +17,7 @@ from django.contrib import messages
 from datetime import datetime
 import logging
 import json
+import random
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -93,8 +94,9 @@ def get_dealerships(request):
     context = {}
     if request.method == "GET":
         state = request.GET.get("state", None)
-        url = "https://ndondero-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
+        url = "https://ndondero-3000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get"
         # Get dealers from the URL
+        # kwargs = {'state': state}
         dealerships = get_dealers_from_cf(url, state=state)
         context["dealerships"] = dealerships
         return render(request, "djangoapp/index.html", context)
@@ -104,10 +106,10 @@ def get_dealerships(request):
 def get_dealer_details(request, dealer_id):
     context = {}
     if request.method == "GET":
-        dealer_url = f"https://ndondero-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get?id={dealer_id}"
+        dealer_url = f"https://ndondero-3000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get?id={dealer_id}"
         dealership = get_dealer_by_id_from_cf(dealer_url, dealer_id)
         context["dealership"] = dealership
-        url = f"https://ndondero-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews?id={dealer_id}"
+        url = f"https://ndondero-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/get_reviews?id={dealer_id}"
         reviews = get_dealer_reviews_from_cf(url, dealer_id)
         context["reviews"] = reviews
         return render(request, "djangoapp/dealer_details.html", context)
@@ -118,7 +120,7 @@ def get_dealer_details(request, dealer_id):
 def add_review(request, dealer_id):
     context = {}
     if request.method == "GET":
-        dealer_url = f"https://ndondero-3000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get?id={dealer_id}"
+        dealer_url = f"https://ndondero-3000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/dealerships/get?id={dealer_id}"
         dealership = get_dealer_by_id_from_cf(dealer_url, dealer_id)
         context["dealership"] = dealership
         if dealership is not None:
@@ -128,17 +130,23 @@ def add_review(request, dealer_id):
     elif request.method == "POST":
         car_model_id = request.POST["car_model_id"]
         car_model = CarModel.objects.get(pk=car_model_id)
+        purchase_date = datetime.utcnow().strftime("%m/%d/%Y")
+        car_year = car_model.year.strftime("%Y")
+        purchase_value = request.POST.get("purchase", False)
+        purchase = purchase_value == "on"
         json_payload = {
-            "purchase_date": datetime.utcnow().strftime("%m/%d/%Y"),
+            "purchase_date": purchase_date,
             "name": request.POST["name"],
             "dealership": dealer_id,
             "review": request.POST["review"],
-            "purchase": request.POST.get("purchase", False),
+            "purchase": purchase_value,
             "car_make": car_model.make.name,
             "car_model": car_model.name,
-            "car_year": car_model.year,
+            "car_year": car_year,
+            "id": random.randint(1, 9999),
         }
-        url = "https://ndondero-5000.theiadockernext-0-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review"
+        
+        url = "https://ndondero-5000.theiadockernext-1-labs-prod-theiak8s-4-tor01.proxy.cognitiveclass.ai/api/post_review"
         response = post_request(url, json_payload, dealer_id=dealer_id)
         print(response)
         return redirect("djangoapp:dealer_details", dealer_id=dealer_id)

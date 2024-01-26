@@ -61,7 +61,7 @@ def post_review():
 
     # Validate that the required fields are present in the review data
     required_fields = [
-        # "id",
+        "id",
         "name",
         "dealership",
         "review",
